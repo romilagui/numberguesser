@@ -14,7 +14,10 @@ let min = 1,
     guessesLeft = 3;
 
 // UI Elements
-// We create first the 'game' wrapper, we want to wrape everything in a #game
+// We create first the 'game' wrapper
+// We have an id of game surrounding everything 
+// we want to wrape everything in a #game
+// We have the classes min-num and max-num
 const game = document.querySelector('#game'),
       minNum = document.querySelector('.min-num'),
       maxNum = document.querySelector('.max-num'),
@@ -25,30 +28,50 @@ const game = document.querySelector('#game'),
 // Assign UI min and max
 minNum.textContent = min;
 maxNum.textContent = max;
-      
+ 
+// Create event listener for the submit button
 // Listen for guess
 guessBtn.addEventListener('click', function(){
   let guess = parseInt(guessInput.value);
   
-  // Validate 1<guessInput<10
+  // Conditional to validate our input 1<guessInput<10
   if(isNaN(guess) || guess < min || guess > max){
     setMessage(`Please enter a number between ${min} and ${max}`, 'red');
   }
-
   // Check if it is the wining number
   if(guess === winningNum){
-    // Disable input
-    guessInput.disabled = true;
-    // Change border color
-    guessInput.style.borderColor = 'green';
-    // Set message
-    setMessage(`${winningNum} is correct, YOU WIN!`, 'green');
-
+    // Game over - won
+     gameOver(true, `${winningNum} is correct, YOU WIN!`)
   } else {
-
+    // Wrong number
+    guessesLeft -= 1;
+    if(guessesLeft === 0){
+      // Game over - lost
+      gameOver(false, `Game Over, you lost. The correct number was ${winningNum}`);
+    } else {
+      // Game is not over but answer is incorrect
+    //Change border color
+    guessInput.style.borderColor = 'red';
+    // Clear Input
+    guessInput.value = '';
+    // Tell user its the worng number
+    setMessage(`${guess} is not correct, ${guessesLeft} guesses left`, 'red');
+    }
   }
 });
 
+function gameOver(won, msg) {
+  let color;
+  won === true ? color = 'green' : color = 'red';
+  // Disable input
+  guessInput.disabled = true;
+  // Change border color
+  guessInput.style.borderColor = color;
+  // Set text color
+  message.style.color = color;
+  // Set message
+  setMessage(msg);
+}
 // Set message
 function setMessage(msg, color){
   message.style.color = color;
